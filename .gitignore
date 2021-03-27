@@ -1,0 +1,5 @@
+# Frontend
+frontend/*.log
+frontend/dist
+frontend/node_modules
+frontend/.cache
