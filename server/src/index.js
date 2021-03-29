@@ -58,6 +58,11 @@ startProms.push(
 
 // Setup HTTP server
 const app = express();
+app.use((req, res, next) => {
+  next();
+
+  console.log(`${req.method} ${req.path} => ${res.statusCode}`);
+});
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -151,7 +156,7 @@ app.post("/api/v0/saved/:code", async (req, res) => {
     return c.code.toLowerCase() === code;
   });
   if (customCountry.length === 1) {
-    country = customCountry[1];
+    country = customCountry[0];
   }
 
   // If not custom country query external API
@@ -261,13 +266,13 @@ app.get("/api/v0/saved", async (req, res) => {
  * @returns {Promise} Resolves when server closes.
  */
 async function httpListen() {
-  console.log(`Starting HTTP server on ${cfg.httpPort}`);
+  console.log(`Starting HTTP server on :${cfg.httpPort}`);
   await new Promise((resolve, reject) => {
     app.listen(cfg.httpPort, (err) => {
       if (err !== undefined) {
         reject(err);
       }
-      console.log(`HTTP server listening on ${cfg.httpPort}`);
+      console.log(`HTTP server listening on :${cfg.httpPort}`);
     });
   });
 }
