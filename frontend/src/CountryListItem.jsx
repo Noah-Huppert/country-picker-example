@@ -34,25 +34,51 @@ font-weight: bold;
 `;
 
 const SaveRemoveButton = styled(Button)`
-display: inline-block;
+display: flex;
 width: 3rem;
 height: 2rem;
 line-height: 2rem;
 border-radius: 2rem;
 font-weight: bold;
-font-size: 2rem;
-text-align: center;
+align-items: center;
+align-content: center;
+flex-direction: column;
 padding: 0;
 margin: 0;
 `;
 
 const LoadingSpinner = styled(Spinner)`
+display: flex;
 width: 1rem;
 height: 1rem;
-line-weight: 1rem;
-font-size: 0.5rem;
-vertical-align: middle;
+line-height: 1rem;
+margin-top: 0.5rem;
 `;
+
+const RemoveButtonTxtContainer = styled.div`
+display: flex;
+font-size: 3rem;
+line-height: 1.5rem;
+`;
+const RemoveButtonTxtEl = () => {
+  return (
+    <RemoveButtonTxtContainer>
+      -
+    </RemoveButtonTxtContainer>
+  );
+};
+
+const SaveButtonTxtContainer = styled.div`
+display: flex;
+font-size: 2rem;
+`;
+const SaveButtonTxtEl = () => {
+  return (
+    <SaveButtonTxtContainer>
+      +
+    </SaveButtonTxtContainer>
+  );
+};
 
 /**
  * Displays a country with its flag, name, and save button.
@@ -63,8 +89,6 @@ const CountryListItem = ({ item }) => {
 
   const [loading, setLoading] = useState(false);
   
-  const savedTxt = (item.saved && "-") || "+";
-
   // Keep track of if this list item is currently mounted in the DOM. If it isn't that means the parent component removed this item from the list, so we don't want to do any sort of state updates when we are unmounted
  
   let mounted = true;
@@ -109,7 +133,15 @@ const CountryListItem = ({ item }) => {
             animation="border"
             variant="white"
           />
-        ) || savedTxt}
+        ) || item.saved === true && (
+          <RemoveButtonTxtEl>
+          -
+          </RemoveButtonTxtEl>
+        ) || (
+          <SaveButtonTxtEl>
+          +
+          </SaveButtonTxtEl>
+        )}
       </SaveRemoveButton>
     </Item>
   );
