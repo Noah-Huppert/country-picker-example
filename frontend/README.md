@@ -27,4 +27,4 @@ yarn dev
 Then navigate to [127.0.0.1:1234](http://127.0.0.1:1234).
 
 # Credits
-The map icon in the header is from [Icons8](https://icons8.com).
+The map icon used as the favicon and in the header is from [Icons8](https://icons8.com).
