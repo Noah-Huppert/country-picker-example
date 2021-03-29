@@ -1,13 +1,13 @@
 {
-  "name": "frontend",
+  "name": "country-picker-example",
   "version": "0.1.0",
   "description": "",
-  "main": "src/index.html",
+  "main": "server/src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "parcel src/index.html",
-    "build": "parcel build src/index.html",
-    "start": "if [ -z \"$PORT\" ]; then PORT=8001; fi; http-server ./dist --port $PORT"
+    "frontend-dev": "parcel frontend/src/index.html",
+    "build": "parcel build frontend/src/index.html",
+    "start": "node --trace-warnings server/src/index.js"
   },
   "repository": {
     "type": "git",
@@ -21,14 +21,18 @@
   "homepage": "https://github.com/Noah-Huppert/country-picker-example#readme",
   "devDependencies": {
     "parcel-bundler": "^1.12.5",
-    "sass": "^1.32.8"
-  },
-  "dependencies": {
+    "sass": "^1.32.8",
     "bootstrap": "^4.6.0",
-    "http-server": "^0.12.3",
     "react": "^17.0.2",
     "react-bootstrap": "^1.5.2",
     "react-dom": "^17.0.2",
     "styled-components": "^5.2.1"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mongodb": "^3.6.5"
   }
 }

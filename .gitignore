@@ -1,9 +1,5 @@
-# Frontend
-frontend/*.log
-frontend/dist
-frontend/node_modules
-frontend/.cache
-
-# Server
-server/node_modules
+*.log
+dist
+node_modules
+.cache
 container-data/

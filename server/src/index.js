@@ -3,6 +3,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const axios = require("axios");
 const mongodb = require("mongodb");
+const path = require("path");
 
 const CFG = {
   externalURL: process.env.COUNTRY_PICKER_EXTERNAL_URL || "http://127.0.0.1:8000",
@@ -66,7 +67,9 @@ app.use((req, res, next) => {
   console.log(`${req.method} ${req.path} => ${res.statusCode}`);
 });
 app.use(cors());
-app.use("/public", express.static("public"));
+
+app.use("/public", express.static(path.join(__dirname, "../public")));
+app.use(express.static(path.join(__dirname, "../../dist")));
 app.use(bodyParser.json());
 
 /**
