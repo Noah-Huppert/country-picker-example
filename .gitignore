@@ -6,3 +6,4 @@ frontend/.cache
 
 # Server
 server/node_modules
+container-data/
