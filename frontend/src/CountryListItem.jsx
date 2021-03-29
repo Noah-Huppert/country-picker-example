@@ -26,7 +26,7 @@ const CountryListItem = ({ item }) => {
   
   return (
     <Item>
-      <FlagImg src={item.image} />
+      <FlagImg src={item.flag} />
       <NameDiv>
         {item.name}
       </NameDiv>

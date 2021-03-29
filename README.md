@@ -5,5 +5,6 @@ Simple country picker frontend and backend.
 - [Overview](#overview)
 
 # Overview
-Example of a full stack application which allows the user
-to search for a countries and save them to a list.
+Example of a full stack application which allows the user to search for a countries and save them to a list.
+
+See the [`./frontend`](./frontend) and [`./server`](./server) directories for more information.

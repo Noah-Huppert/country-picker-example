@@ -1,6 +1,6 @@
 class APIClient {
   constructor() {
-    this.primaryAPIURL = "http://127.0.0.1:8000/api/v1";
+    this.primaryAPIURL = "http://127.0.0.1:8000/api/v0";
     this.backupAPIURL = "https://restcountries.eu/rest/v2";
 
     // null = not checked, true = ok, false = failure
@@ -82,7 +82,7 @@ class APIClient {
     
     return body.slice(0, 5).map((r) => {
       return {
-        image: r.flag,
+        flag: r.flag,
         name: r.name,
         saved: r.saved || false,
       };

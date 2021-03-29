@@ -3,3 +3,6 @@ frontend/*.log
 frontend/dist
 frontend/node_modules
 frontend/.cache
+
+# Server
+server/node_modules
