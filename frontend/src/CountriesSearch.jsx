@@ -1,6 +1,11 @@
-import React, { useState } from "react";
+import React, {
+  useState,
+  useEffect,
+  useContext,
+} from "react";
 import styled from "styled-components";
 
+import { APICtx } from "./App.jsx";
 import CountryListItem from "./CountryListItem.jsx";
 
 const SearchInput = styled.input`
@@ -12,28 +17,28 @@ const ResultsList = styled.div`
 
 `;
 
-function dummyResults(seed) {
-  let fakeRes = [];
-  for (var i = 0; i < 5; i++) {
-    fakeRes.push({
-      image: "https://i.redd.it/sdle64fbox101.png",
-      name: `${seed}-${i}`,
-      saved: false,
-    });
-  }
-
-  return fakeRes;
-}
-
 const CountriesSearch = () => {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState(dummyResults("null"));
+  const apiClient = useContext(APICtx);
   
-  const onQueryChange = (e) => {
-    setQuery(e.target.value);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+  const [searchTimeout, setSearchTimeout] = useState(null);
 
-    // dummy results
-    setResults(dummyResults(e.target.value));
+  useEffect(async () => {
+    if (query.length === 0) {
+      setResults([]);
+    } else {
+      // Ensure we don't spam the search endpoint while
+      // the user is typing.
+      clearTimeout(searchTimeout);
+      setSearchTimeout(setTimeout(async () => {
+        setResults(await apiClient.searchCountries(query));
+      }, 200));
+    }
+  }, [query]);
+  
+  const onQueryChange = async (e) => {
+    setQuery(e.target.value);
   };
   
   return (
