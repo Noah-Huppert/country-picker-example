@@ -74,7 +74,9 @@ class APIClient {
    */
   async searchCountries(query) {
     const res = await this.fetch(`/name/${query}?fields=flag;name`, "GET");
-    if (res.ok === false) {
+    if (res.status === 404) {
+      return [];
+    } else if (res.ok === false) {
       return [];
     }
 

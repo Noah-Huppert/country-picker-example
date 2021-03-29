@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 
 const Item = styled.div`
-width: 20rem;
+max-width: 20rem;
 display: flex;
 border: 1px solid black;
 padding: 1rem;
@@ -10,7 +10,7 @@ margin-bottom: 0.5rem;
 `;
 
 const FlagImg = styled.img`
-max-height: 2rem;
+max-height: 1rem;
 align-self: center;
 `;
 

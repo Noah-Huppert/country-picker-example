@@ -8,5 +8,8 @@ services:
       - MONGO_INITDB_ROOT_PASSWORD=dev-country-picker-example
       - MONGO_INITDB_DATABASE=dev-country-picker-example
     volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
       - ./container-data/mongo:/data/db
     network_mode: host
+    ports:
+      - '27017-27019:27017-27019'

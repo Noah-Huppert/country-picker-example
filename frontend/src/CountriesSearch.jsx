@@ -40,7 +40,7 @@ const CountriesSearch = () => {
   const onQueryChange = async (e) => {
     setQuery(e.target.value);
   };
-  
+
   return (
     <>
       <SearchInput

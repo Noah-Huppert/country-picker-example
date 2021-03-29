@@ -6,7 +6,7 @@
   "author": "Noah Huppert",
   "license": "MIT",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node --trace-warnings src/index.js"
   },
   "dependencies": {
     "axios": "^0.21.1",
