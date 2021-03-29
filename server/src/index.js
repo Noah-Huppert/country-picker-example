@@ -47,10 +47,12 @@ let startProms = [];
 // Connect to Mongo
 const mongoClient = new mongodb.MongoClient(cfg.mongoURI,{ useUnifiedTopology: true });
 let db = null;
+let dbSavedCountries = null;
 
 startProms.push(
   mongoClient.connect().then(() => {
     db = mongoClient.db(cfg.mongoDBName);
+    dbSavedCountries = db.collection("saved_countries");
   })
 );
 
@@ -72,7 +74,7 @@ app.get("/api/v0/health", (req, res) => {
 /**
  * Search for country by name.
  * Request: URL parameter is a partial query.
- * Response { name: string, code: string, flag: string, saved: bool }[]
+ * Response Country[]
  */
 app.get("/api/v0/name/:query", async (req, res) => {
   let query = req.params.query.toLowerCase();
@@ -107,24 +109,151 @@ app.get("/api/v0/name/:query", async (req, res) => {
   // Ensure returning no more than 5
   matches = matches.slice(0, 5);
 
-  // Add saved status
+  // Ensure all country codes are lowercase
+  matches = matches.map((c) => {
+    c.code = c.code.toLowerCase();
+    return c;
+  })
+
+  // Get saved status
+  const matchCodes = matches.map((m) => {
+    return m.code;
+  });
+  const savedMatchCodes = (await dbSavedCountries.find({
+    code: {
+      $in: matchCodes,
+    },
+  }).toArray()).map((c) => {
+    return c.code;
+  });
+  
   matches = matches.map((m) => {
     return {
       ...m,
-      saved: false,
+      saved: savedMatchCodes.indexOf(m.code) !== -1,
     };
   });
 
   return res.json(matches);
 });
 
-app.post("/api/v0/save/:code", (req, res) => {
-  const code = req.params.code;
-  // TODO: Insert
+/**
+ * Marks a country as saved.
+ * Request: URL parameter code is the code of the country to save.
+ * Response: { country: Country }
+ */
+app.post("/api/v0/saved/:code", async (req, res) => {
+  const code = req.params.code.toLowerCase();
+  let country = null;
+
+  // Check if custom country
+  let customCountry = CUSTOM_COUNTRIES.filter((c) => {
+    return c.code.toLowerCase() === code;
+  });
+  if (customCountry.length === 1) {
+    country = customCountry[1];
+  }
+
+  // If not custom country query external API
+  if (country === null) {
+    try {
+      const res = await axios.get(`https://restcountries.eu/rest/v2/alpha/${code}?fields=flag;name`);
+      country = {
+        name: res.data.name,
+        code: code,
+        flag: res.data.flag,
+      };
+    } catch (e) {
+      // Not found
+      if (e.response.status === 404) {
+        return res.status(404).json({
+          error: `Could not find country with code "${code}"`,
+        });
+      }
+
+      // Other error
+      console.error(`Failed to query external API for country with code=${code} for saving`);
+      return res.status(500).json({
+        error: `Failed to find country with code "${code}"`,
+      });
+    }
+  }
+
+  // country will not be null here
+  country.code = country.code.toLowerCase();
+
+  try {
+    await dbSavedCountries.updateOne(
+      { code: code },
+      { $set: country },
+      { upsert: true }
+    );
+  } catch (e) {
+    console.error(`Failed to saved country "${code}": ${e}`);
+    return res.status(500).json({
+      error: "Failed to save country",
+    });
+  }
+
+  return res.json({
+    country: {
+      ...country,
+      saved: true,
+    },
+  });
 });
 
-// TODO: Make get saved endpoint
-// TODO: Make remove saved endpoint
+/**
+ * Remove a saved country from the list.
+ * Request: URL parameter code is the code of the country to delete.
+ * Response: { deleted_country_code: string }
+ */
+app.delete("/api/v0/saved/:code", async (req, res) => {
+  const code = req.params.code.toLowerCase();
+
+  // Delete
+  try {
+    await dbSavedCountries.deleteOne({ code: code });
+  } catch (e) {
+    console.error(`Failed to delete country "${code}": ${e}`);
+    return res.status(500).json({
+      error: `Failed to delete country with code "${code}"`,
+    });
+  }
+
+  return res.json({
+    deleted_country_code: code,
+  });
+});
+
+/**
+ * Retrieves all saved countries.
+ * Request: N/A
+ * Response: Country[]
+ */
+app.get("/api/v0/saved", async (req, res) => {
+  let countries = [];
+
+  // Get from database
+  try {
+    countries = await dbSavedCountries.find({}).toArray();
+  } catch (e) {
+    console.error(`Failed to retrieve list of saved countries: ${e}`);
+    return res.status(500).json({
+      error: "Failed to retrieve list of saved countries",
+    });
+  }
+
+  // Add saved field
+  countries = countries.map((c) => {
+    return {
+      ...c,
+      saved: true,
+    };
+  });
+
+  return res.json(countries);
+});
 
 /**
  * Runs express app listen(), which blocks until the
