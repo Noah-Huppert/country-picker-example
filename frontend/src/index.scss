@@ -1,0 +1,16 @@
+// If you update colors here YOU MUST update colors.js as well!!!
+$theme-colors: (
+  "primary": #6200ee,
+  "light": #985eff,
+  "dark": #3700b3,
+  "secondary": #03dac6
+);
+
+@import "~bootstrap/scss/bootstrap";
+
+body {
+  text-size: 10px;
+  font-family: Arial, sans-serif;
+  background: map-get($theme-colors, "dark");
+  color: white;
+}

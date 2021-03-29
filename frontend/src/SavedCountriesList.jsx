@@ -38,7 +38,6 @@ const SavedCountriesList = () => {
   
   return (
     <>
-      <h1>Saved Countries</h1>
       {saved.map((c) => {
         return (
           <CountryListItem key={c.code} item={c} />

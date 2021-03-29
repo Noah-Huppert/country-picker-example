@@ -2,15 +2,20 @@ import React, {
   useContext,
 } from "react";
 import styled from "styled-components";
+import Button from "react-bootstrap/Button";
 
 import { APICtx } from "./App.jsx";
+import COLORS from "./colors.js";
 
 const Item = styled.div`
 max-width: 20rem;
 display: flex;
-border: 1px solid black;
+align-items: center;
+border-radius: 0.3rem;
 padding: 1rem;
 margin-bottom: 0.5rem;
+background: white;
+color: black;
 `;
 
 const FlagImg = styled.img`
@@ -25,6 +30,23 @@ margin-left: 1rem;
 font-weight: bold;
 `;
 
+const SaveRemoveButton = styled(Button)`
+display: inline-block;
+width: 3rem;
+height: 2rem;
+line-height: 2rem;
+border-radius: 2rem;
+font-weight: bold;
+font-size: 2rem;
+text-align: center;
+padding: 0;
+margin: 0;
+`;
+
+/**
+ * Displays a country with its flag, name, and save button.
+ * @params item {Country} To display.
+ */
 const CountryListItem = ({ item }) => {
   const apiClient = useContext(APICtx);
   
@@ -55,9 +77,9 @@ const CountryListItem = ({ item }) => {
         {item.name}
       </NameDiv>
 
-      <button onClick={onListButtonClick}>
+      <SaveRemoveButton onClick={onListButtonClick}>
         {savedTxt}
-      </button>
+      </SaveRemoveButton>
     </Item>
   );
 };

@@ -4,11 +4,13 @@ import React, {
   useContext,
 } from "react";
 import styled from "styled-components";
+import Form from "react-bootstrap/Form";
+import Spinner from "react-bootstrap/Spinner";
 
 import { APICtx } from "./App.jsx";
 import CountryListItem from "./CountryListItem.jsx";
 
-const SearchInput = styled.input`
+const SearchInput = styled(Form.Control)`
 width: 20rem;
 margin-bottom: 0.5rem;
 `;
@@ -17,14 +19,26 @@ const ResultsList = styled.div`
 
 `;
 
+const SearchLoading = styled.div`
+width: 100%;
+display: flex;
+align-items: center;
+margin-left: 1rem;
+`;
+
+const SearchLoadingText = styled.div`
+font-size: 1.5rem;
+font-weight: bold;
+margin-left: 1rem;
+`;
+
 const CountriesSearch = () => {
   const apiClient = useContext(APICtx);
   
   const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
   const [searchTimeout, setSearchTimeout] = useState(null);
-
-  console.log("CountriesSearch, results=", results);
 
   useEffect(() => {
     // Ensure search results reflect saved status
@@ -57,13 +71,14 @@ const CountriesSearch = () => {
     if (query.length === 0) {
       setResults([]);
     } else {
+      setLoading(true);
       // Ensure we don't spam the search endpoint while
       // the user is typing.
       clearTimeout(searchTimeout);
       setSearchTimeout(setTimeout(async () => {
-        // TODO: Add loading UI element
         // TODO: No results UI
         setResults(await apiClient.searchCountries(query));
+        setLoading(false);
       }, 200));
     }
   }, [query]);
@@ -74,14 +89,27 @@ const CountriesSearch = () => {
 
   return (
     <>
-      <h1>Add Countries</h1>
-      <SearchInput
-        type="text"
-        value={query}
-        onChange={onQueryChange} />
+      <Form>
+        <Form.Group controlId="contriesSearch">
+          <SearchInput
+            type="text"
+            placeholder="Search for a country"
+            value={query}
+            onChange={onQueryChange} />
+        </Form.Group>
+      </Form>
 
       <ResultsList>
-        {results.map((item) => {
+        {loading === true && (
+          <SearchLoading className="text-light">
+            <Spinner
+              animation="border"
+            />
+            <SearchLoadingText>
+              Searching...
+            </SearchLoadingText>
+          </SearchLoading>
+        ) || results.map((item) => {
           return (
             <CountryListItem
               key={item.code}
