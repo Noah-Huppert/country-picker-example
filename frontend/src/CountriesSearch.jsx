@@ -82,6 +82,10 @@ const CountriesSearch = () => {
       }, 200));
     }
   }, [query]);
+
+  const onSearchFormSubmit = (e) => {
+    e.preventDefault();
+  };
   
   const onQueryChange = async (e) => {
     setQuery(e.target.value);
@@ -89,7 +93,7 @@ const CountriesSearch = () => {
 
   return (
     <>
-      <Form>
+      <Form onSubmit={onSearchFormSubmit}>
         <Form.Group controlId="contriesSearch">
           <SearchInput
             type="text"

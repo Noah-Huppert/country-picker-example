@@ -18,15 +18,14 @@ font-weight: bold;
 `;
 
 const Content = styled.div`
-height: 100%;
 display: flex;
-content-direction: column;
-align-content: center;
+align-content: start;
+align-self: center;
 padding: 1rem;
+flex-wrap: wrap;
 `;
 
 const ContentSection = styled.div`
-width: 100%;
 padding: 1rem;
 margin: 1rem;
 border-radius: 0.2rem;
@@ -36,11 +35,6 @@ const ContentSectionTitle = styled.div`
 font-size: 2rem;
 font-weight: bold;
 margin-bottom: 1rem;
-`;
-
-const Footer = styled.div`
-padding: 1rem;
-font-size: 1rem;
 `;
 
 const APICtx = React.createContext();
@@ -77,10 +71,6 @@ const App = () => {
             <SavedCountriesList />
           </ContentSection>
         </Content>
-
-        <Footer className="text-light">
-          The map icon in the header is from <a href="https://icons8.com">Icons8</a>.
-        </Footer>
       </APICtx.Provider>
     </>
   );

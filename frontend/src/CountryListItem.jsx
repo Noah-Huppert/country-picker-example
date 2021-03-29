@@ -22,8 +22,10 @@ color: black;
 `;
 
 const FlagImg = styled.img`
-max-height: 1rem;
+width: 2rem;
+height: 1rem;
 align-self: center;
+border: 1px solid black;
 `;
 
 const NameDiv = styled.div`
