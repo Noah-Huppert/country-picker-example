@@ -4,39 +4,41 @@ const bodyParser = require("body-parser");
 const axios = require("axios");
 const mongodb = require("mongodb");
 
+const CFG = {
+  externalURL: process.env.COUNTRY_PICKER_EXTERNAL_URL || "http://127.0.0.1:8000",
+  httpPort: process.env.PORT || 8000,
+  mongoURI: process.env.COUNTRY_PICKER_MONGO_URI || "mongodb://127.0.0.1:27017",
+  mongoDBName: process.env.COUNTRY_PICKER_MONGO_DB_NAME || "dev-country-picker-example",
+};
+
+
 const CUSTOM_COUNTRIES = [
   {
     name: "Antegria",
     code: "CUSTOM_AG",
-    flag: "https://static.wikia.nocookie.net/papersplease/images/4/47/Antegria_emblem.png",
+    flag: `${CFG.externalURL}/public/custom_ag.png`,
   },
   {
     name: "Arstotzka",
     code: "CUSTOM_AZ",
-    flag: "https://i.imgur.com/gMszxk1.png",
+    flag: `${CFG.externalURL}/public/custom_az.png`,
   },
   {
     name: "Atlantis",
     code: "CUSTOM_AT",
-    flag: "https://i.imgur.com/ddprV9V.png",
+    flag: `${CFG.externalURL}/public/custom_at.png`,
   },
   {
     name: "Canada",
     code: "CUSTOM_CA",
-    flag: "https://i.imgur.com/O6oEdxf.png",
+    flag: `${CFG.externalURL}/public/custom_ca.png`,
   },
   {
     name: "Grenyarnia",
     code: "CUSTOM_GN",
-    flag: "https://static.wikia.nocookie.net/orbis-novus",
+    flag: `${CFG.externalURL}/public/custom_gn.png`,
   },
 ];
-
-const cfg = {
-  httpPort: process.env.PORT || 8000,
-  mongoURI: process.env.MONGO_URI || "mongodb://127.0.0.1:27017",
-  mongoDBName: process.env.MONGO_DB_NAME || "dev-country-picker-example",
-};
 
 /**
  * All promises in this array will be completed before
@@ -45,13 +47,13 @@ const cfg = {
 let startProms = [];
 
 // Connect to Mongo
-const mongoClient = new mongodb.MongoClient(cfg.mongoURI,{ useUnifiedTopology: true });
+const mongoClient = new mongodb.MongoClient(CFG.mongoURI,{ useUnifiedTopology: true });
 let db = null;
 let dbSavedCountries = null;
 
 startProms.push(
   mongoClient.connect().then(() => {
-    db = mongoClient.db(cfg.mongoDBName);
+    db = mongoClient.db(CFG.mongoDBName);
     dbSavedCountries = db.collection("saved_countries");
   })
 );
@@ -64,6 +66,7 @@ app.use((req, res, next) => {
   console.log(`${req.method} ${req.path} => ${res.statusCode}`);
 });
 app.use(cors());
+app.use("/public", express.static("public"));
 app.use(bodyParser.json());
 
 /**
@@ -266,13 +269,13 @@ app.get("/api/v0/saved", async (req, res) => {
  * @returns {Promise} Resolves when server closes.
  */
 async function httpListen() {
-  console.log(`Starting HTTP server on :${cfg.httpPort}`);
+  console.log(`Starting HTTP server on :${CFG.httpPort}`);
   await new Promise((resolve, reject) => {
-    app.listen(cfg.httpPort, (err) => {
+    app.listen(CFG.httpPort, (err) => {
       if (err !== undefined) {
         reject(err);
       }
-      console.log(`HTTP server listening on :${cfg.httpPort}`);
+      console.log(`HTTP server listening on :${CFG.httpPort}, it should be accessible from ${CFG.externalURL}`);
     });
   });
 }
