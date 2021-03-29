@@ -1,27 +1,33 @@
 const express = require("express");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 const axios = require("axios");
 const mongodb = require("mongodb");
 
 const CUSTOM_COUNTRIES = [
   {
     name: "Antegria",
+    code: "CUSTOM_AG",
     flag: "https://static.wikia.nocookie.net/papersplease/images/4/47/Antegria_emblem.png",
   },
   {
     name: "Arstotzka",
+    code: "CUSTOM_AZ",
     flag: "https://i.imgur.com/gMszxk1.png",
   },
   {
     name: "Atlantis",
+    code: "CUSTOM_AT",
     flag: "https://i.imgur.com/ddprV9V.png",
   },
   {
     name: "Canada",
+    code: "CUSTOM_CA",
     flag: "https://i.imgur.com/O6oEdxf.png",
   },
   {
     name: "Grenyarnia",
+    code: "CUSTOM_GN",
     flag: "https://static.wikia.nocookie.net/orbis-novus",
   },
 ];
@@ -51,6 +57,7 @@ startProms.push(
 // Setup HTTP server
 const app = express();
 app.use(cors());
+app.use(bodyParser.json());
 
 /**
  * Health check endpoint.
@@ -65,7 +72,7 @@ app.get("/api/v0/health", (req, res) => {
 /**
  * Search for country by name.
  * Request: URL parameter is a partial query.
- * Response { flag: string, name: string, saved: bool }[]
+ * Response { name: string, code: string, flag: string, saved: bool }[]
  */
 app.get("/api/v0/name/:query", async (req, res) => {
   let query = req.params.query.toLowerCase();
@@ -73,11 +80,12 @@ app.get("/api/v0/name/:query", async (req, res) => {
   
   // Search external source for countries
   try {
-    let externRes = await axios.get(`https://restcountries.eu/rest/v2/name/${query}?fields=flag;name`);
+    let externRes = await axios.get(`https://restcountries.eu/rest/v2/name/${query}?fields=flag;name;alpha2Code`);
 
     externRes.data.slice(0, 5).forEach((r) => {
       matches.push({
         name: r.name,
+        code: r.alpha2Code,
         flag: r.flag,
       });
     });
@@ -109,6 +117,14 @@ app.get("/api/v0/name/:query", async (req, res) => {
 
   return res.json(matches);
 });
+
+app.post("/api/v0/save/:code", (req, res) => {
+  const code = req.params.code;
+  // TODO: Insert
+});
+
+// TODO: Make get saved endpoint
+// TODO: Make remove saved endpoint
 
 /**
  * Runs express app listen(), which blocks until the

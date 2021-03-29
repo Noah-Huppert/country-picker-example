@@ -12,9 +12,10 @@ class APIClient {
    * @param path {string} Path to request from API. Must start with a slash.
    * @param method {string} HTTP method, all capitals.
    * @param body {object} Body to be JSON encoded, optional.
+   * @param primaryOnly {boolean} If true the request will only be attempted if the primary API is online.
    * @returns {Promise<FetchResponse>}
    */
-  async fetch(path, method, body) {
+  async fetch(path, method, body, primaryOnly) {
     // Check if primary API is okay
     let activeAPIURL = this.primaryAPIURL;
     
@@ -36,6 +37,10 @@ class APIClient {
         activeAPIURL = this.backupAPIURL;
       }
     } else if (this.primaryAPIOK === false) {
+      if (primaryOnly === true) {
+        throw "This feature is offline";
+      }
+      
       activeAPIURL = this.backupAPIURL;
     }
 
@@ -73,7 +78,7 @@ class APIClient {
    * @returns {Promise<[]Country>} The top 5 matching countries.
    */
   async searchCountries(query) {
-    const res = await this.fetch(`/name/${query}?fields=flag;name`, "GET");
+    const res = await this.fetch(`/name/${query}?fields=flag;name;alpha2Code`, "GET");
     if (res.status === 404) {
       return [];
     } else if (res.ok === false) {
@@ -86,10 +91,23 @@ class APIClient {
       return {
         flag: r.flag,
         name: r.name,
+        code: r.code || r.alpha2Code,
         saved: r.saved || false,
       };
     });
   }
+
+  /**
+   * Save a country to the saved list.
+   * @param code {string} Code of country to save.
+   * @returns {Promise} When saved.
+   */
+  async saveCountry(code) {
+    await this.fetch(`/save/${code}`, "POST", undefined, true);    
+  }
+
+  // TODO: Make get saved wrapper function
+  // TODO: Make delete saved wrapper function
 }
 
 export default APIClient;

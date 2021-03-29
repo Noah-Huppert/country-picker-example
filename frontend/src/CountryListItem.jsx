@@ -23,6 +23,8 @@ font-weight: bold;
 
 const CountryListItem = ({ item }) => {
   const savedTxt = (item.saved && "-") || "+";
+
+  // TODO: Make button add or remove saved item
   
   return (
     <Item>

@@ -52,7 +52,7 @@ const CountriesSearch = () => {
         {results.map((item) => {
           return (
             <CountryListItem
-              key={item.name}
+              key={item.code}
               item={item}
             />
           );
