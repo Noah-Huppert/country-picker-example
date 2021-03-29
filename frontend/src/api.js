@@ -1,10 +1,19 @@
+const SUPPORTED_EVENTS = ["saveCountry", "removeSavedCountry"];
+
 class APIClient {
   constructor() {
+    // API URLs
     this.primaryAPIURL = "http://127.0.0.1:8000/api/v0";
     this.backupAPIURL = "https://restcountries.eu/rest/v2";
 
     // null = not checked, true = ok, false = failure
     this.primaryAPIOK = null;
+
+    // Registered event handlers. Keys are event names. Values are arrays of callbacks.
+    this.eventHandlers = {};
+    SUPPORTED_EVENTS.forEach((e) => {
+      this.eventHandlers[e] = [];
+    });
   }
 
   /**
@@ -73,6 +82,38 @@ class APIClient {
   }
 
   /**
+   * Register an event handler. Runs the callback when
+   * the specified event occurs.
+   * @param eventName {string} Name of event for which to run callback. Supported events are: "saveCountry" indicates a new country was saved, "removeSavedCountry" indicates a country was removed from the saved list.
+   * @param callback {Function} Called whenever the event occurs. The function will be called with one argument which will be the data associated with the event. This differs based on the event: "saveCountry" the argument will be a Country object for the saved country, "removeSavedCountry" the argument will be the code of the country which was removed.
+   * @throws {string} If the eventName is not supported.
+   */
+  on(eventName, callback) {
+    if (SUPPORTED_EVENTS.indexOf(eventName) === -1) {
+      throw `Event name "${eventName}" is not a supported event`;
+    }
+
+    this.eventHandlers[eventName].push(callback);
+  }
+
+  /**
+   * For internal use only. Runs event handlers for 
+   * the specified event.
+   * @param eventName {string} Name of event to trigger.
+   * @param argument {any} Value to pass to event handler callbacks as an argument.
+   * @throws {string} If the eventName is not supported.
+   */
+  triggerEvent(eventName, argument) {
+    if (SUPPORTED_EVENTS.indexOf(eventName) === -1) {
+      throw `Event name "${eventName}" is not a supported event`;
+    }
+
+    this.eventHandlers[eventName].forEach((cb) => {
+      cb(argument);
+    });
+  }
+
+  /**
    * Search for a country by a, maybe partial, query.
    * @param query {string} Search query.
    * @returns {Promise<[]Country>} The top 5 matching countries.
@@ -103,7 +144,9 @@ class APIClient {
    * @returns {Promise} When saved.
    */
   async saveCountry(code) {
-    await this.fetch(`/saved/${code}`, "POST", undefined, true);    
+    const resp = await this.fetch(`/saved/${code}`, "POST", undefined, true);
+    const body = await resp.json();
+    this.triggerEvent("saveCountry", body.country);
   }
 
   /**
@@ -113,6 +156,7 @@ class APIClient {
    */
   async removeSavedCountry(code) {
     await this.fetch(`/saved/${code}`, "DELETE", undefined, true);
+    this.triggerEvent("removeSavedCountry", code);
   }
 
   /**

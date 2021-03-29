@@ -24,6 +24,35 @@ const CountriesSearch = () => {
   const [results, setResults] = useState([]);
   const [searchTimeout, setSearchTimeout] = useState(null);
 
+  console.log("CountriesSearch, results=", results);
+
+  useEffect(() => {
+    // Ensure search results reflect saved status
+    apiClient.on("saveCountry", (country) => {
+      setResults((results) => {
+        return results.map((r) => {
+          if (r.code === country.code) {
+            return country;
+          }
+
+          return r;
+        });
+      });
+    });
+
+    apiClient.on("removeSavedCountry", (code) => {
+      setResults((results) => {
+        return results.map((r) => {
+          if (r.code === code) {
+            r.saved = false;
+          }
+
+          return r;
+        });
+      });
+    });
+  }, []);
+
   useEffect(async () => {
     if (query.length === 0) {
       setResults([]);
@@ -45,6 +74,7 @@ const CountriesSearch = () => {
 
   return (
     <>
+      <h1>Add Countries</h1>
       <SearchInput
         type="text"
         value={query}

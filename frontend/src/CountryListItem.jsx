@@ -1,5 +1,4 @@
 import React, {
-  useState,
   useContext,
 } from "react";
 import styled from "styled-components";
@@ -29,24 +28,20 @@ font-weight: bold;
 const CountryListItem = ({ item }) => {
   const apiClient = useContext(APICtx);
   
-  const [saved, setSaved] = useState(item.saved);
-  
-  const savedTxt = (saved && "-") || "+";
+  const savedTxt = (item.saved && "-") || "+";
 
   const onListButtonClick = async () => {
     // TODO: Loading UI
     // Save item if not saved
-    if (saved === false) {
+    if (item.saved === false) {
       try {
         await apiClient.saveCountry(item.code);
-        setSaved(true);
       } catch (e) {
         console.error(`Failed to save country with code "${item.code}": ${e}`);
       }
     } else {
       try {
         await apiClient.removeSavedCountry(item.code);
-        setSaved(false);
       } catch (e) {
         console.error(`Failed to remove saved country with code "${item.code}": ${e}`);
       }
