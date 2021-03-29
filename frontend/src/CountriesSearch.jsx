@@ -32,6 +32,15 @@ font-weight: bold;
 margin-left: 1rem;
 `;
 
+const NoResults = styled.div`
+width: 100%;
+display: flex;
+align-items: center;
+margin-left: 1rem;
+font-weight: bold;
+font-size: 1.3rem;
+`;
+
 const CountriesSearch = () => {
   const apiClient = useContext(APICtx);
   
@@ -39,6 +48,7 @@ const CountriesSearch = () => {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
   const [searchTimeout, setSearchTimeout] = useState(null);
+  const [noResults, setNoResults] = useState(false);
 
   useEffect(() => {
     // Ensure search results reflect saved status
@@ -70,14 +80,21 @@ const CountriesSearch = () => {
   useEffect(async () => {
     if (query.length === 0) {
       setResults([]);
+      setNoResults(false);
     } else {
       setLoading(true);
       // Ensure we don't spam the search endpoint while
       // the user is typing.
       clearTimeout(searchTimeout);
       setSearchTimeout(setTimeout(async () => {
-        // TODO: No results UI
-        setResults(await apiClient.searchCountries(query));
+        const res = await apiClient.searchCountries(query);
+        setResults(res);
+        if (res.length === 0) {
+          setNoResults(true);
+        } else {
+          setNoResults(false);
+        }
+        
         setLoading(false);
       }, 200));
     }
@@ -113,6 +130,10 @@ const CountriesSearch = () => {
               Searching...
             </SearchLoadingText>
           </SearchLoading>
+        ) || noResults === true && (
+          <NoResults className="text-light">
+            No results.
+          </NoResults>
         ) || results.map((item) => {
           return (
             <CountryListItem
