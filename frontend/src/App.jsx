@@ -2,7 +2,7 @@ import React from "react";
 
 import APIClient from "./api.js";
 import CountriesSearch from "./CountriesSearch.jsx";
-import CountriesList from "./CountriesList.jsx";
+import SavedCountriesList from "./SavedCountriesList.jsx";
 
 const APICtx = React.createContext();
 
@@ -11,7 +11,7 @@ const App = () => {
     <>
       <APICtx.Provider value={new APIClient()}>
         <CountriesSearch />
-        <CountriesList />
+        <SavedCountriesList />
       </APICtx.Provider>
     </>
   );

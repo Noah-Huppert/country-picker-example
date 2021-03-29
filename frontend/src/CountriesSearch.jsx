@@ -32,6 +32,8 @@ const CountriesSearch = () => {
       // the user is typing.
       clearTimeout(searchTimeout);
       setSearchTimeout(setTimeout(async () => {
+        // TODO: Add loading UI element
+        // TODO: No results UI
         setResults(await apiClient.searchCountries(query));
       }, 200));
     }

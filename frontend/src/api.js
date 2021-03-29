@@ -103,11 +103,26 @@ class APIClient {
    * @returns {Promise} When saved.
    */
   async saveCountry(code) {
-    await this.fetch(`/save/${code}`, "POST", undefined, true);    
+    await this.fetch(`/saved/${code}`, "POST", undefined, true);    
   }
 
-  // TODO: Make get saved wrapper function
-  // TODO: Make delete saved wrapper function
+  /**
+   * Remove the country from the saved list.
+   * @param code {string} Code of country to save.
+   * @returns {Promise} When removed.
+   */
+  async removeSavedCountry(code) {
+    await this.fetch(`/saved/${code}`, "DELETE", undefined, true);
+  }
+
+  /**
+   * Retrieve a list of all saved countries.
+   * @returns {Promise<Country[]>} Array of saved countries.
+   */
+  async getSavedCountries() {
+    const resp = await this.fetch("/saved", "GET", undefined, true);
+    return await resp.json();
+  }
 }
 
 export default APIClient;

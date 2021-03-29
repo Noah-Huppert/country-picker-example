@@ -1,5 +1,10 @@
-import React from "react";
+import React, {
+  useState,
+  useContext,
+} from "react";
 import styled from "styled-components";
+
+import { APICtx } from "./App.jsx";
 
 const Item = styled.div`
 max-width: 20rem;
@@ -22,9 +27,31 @@ font-weight: bold;
 `;
 
 const CountryListItem = ({ item }) => {
-  const savedTxt = (item.saved && "-") || "+";
+  const apiClient = useContext(APICtx);
+  
+  const [saved, setSaved] = useState(item.saved);
+  
+  const savedTxt = (saved && "-") || "+";
 
-  // TODO: Make button add or remove saved item
+  const onListButtonClick = async () => {
+    // TODO: Loading UI
+    // Save item if not saved
+    if (saved === false) {
+      try {
+        await apiClient.saveCountry(item.code);
+        setSaved(true);
+      } catch (e) {
+        console.error(`Failed to save country with code "${item.code}": ${e}`);
+      }
+    } else {
+      try {
+        await apiClient.removeSavedCountry(item.code);
+        setSaved(false);
+      } catch (e) {
+        console.error(`Failed to remove saved country with code "${item.code}": ${e}`);
+      }
+    }
+  };
   
   return (
     <Item>
@@ -33,7 +60,7 @@ const CountryListItem = ({ item }) => {
         {item.name}
       </NameDiv>
 
-      <button>
+      <button onClick={onListButtonClick}>
         {savedTxt}
       </button>
     </Item>
