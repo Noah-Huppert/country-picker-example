@@ -18,6 +18,7 @@ font-weight: bold;
 `;
 
 const Content = styled.div`
+height: 100%;
 display: flex;
 content-direction: column;
 align-content: center;
