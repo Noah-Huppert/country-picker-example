@@ -32,11 +32,15 @@ yarn build
 ```
 
 ## Start MongoDB
-Start the MongoDB server (Docker is required):
+Start the MongoDB server in a Docker container:
 
 ```
 ./server/containers-mongodb start
 ```
+
+This starts MongoDB with an admin user named `devuser` with a password of `devpassword` on `127.0.0.1:27017`.
+
+If you use a Docker compatible alternative (Like Podman) set the `CONTAINER_CLI` environment variable to make the `containers-mongodb` script use your container CLI.
 
 ## Configuration
 Configuration values are provided via environment variables. The default values should work with the development setup by default:
