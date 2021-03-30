@@ -17,24 +17,35 @@ Example of a full stack application which allows the user to search for countrie
 # Run
 To run the application NodeJS and Yarn must be installed.
 
+## Install Dependencies
 First install dependencies:
 
 ```
 yarn install
 ```
 
-Then build the frontend:
+## Build Frontend
+Then build the frontend using Parcel:
 
 ```
 yarn build
 ```
 
+## Start MongoDB
 Start the MongoDB server (Docker is required):
 
 ```
 ./server/containers-mongodb start
 ```
 
+## Configuration
+Configuration values are provided via environment variables. The default values should work with the development setup by default:
+
+- `PORT` (Integer, Default: `8000`): Port on which to listen for HTTP traffic
+- `COUNTRY_PICKER_MONGO_URI` (String, Default: `mongodb://devuser:devpassword@127.0.0.1:27017`): MongoDB connection URI
+- `COUNTRY_PICKER_MONGO_DB_NAME` (String, Default: `dev-country-picker-example`): Name of the MongoDB database in which to store data
+
+## Run Server
 Then launch the server:
 
 ```
@@ -63,12 +74,6 @@ Endpoints:
   - Request: URL parameter `{code}` must be the code of the country one wishes to remove from the saved list
   - Response: The code of the country which was successfully deleted - `{ deleted_country_code: string }`
 
-Configuration values are provided via environment variables. The default values should work with the development setup by default:
-
-- `PORT` (Integer, Default: `8000`): Port on which to listen for HTTP traffic
-- `COUNTRY_PICKER_MONGO_URI` (String, Default: `mongodb://devuser:devpassword@127.0.0.1:27017`): MongoDB connection URI
-- `COUNTRY_PICKER_MONGO_DB_NAME` (String, Default: `dev-country-picker-example`): Name of the MongoDB database in which to store data
-
 To run the server:
 
 ```
@@ -95,7 +100,7 @@ Ignore the terminal output which says to view the build result at `127.0.0.1:123
 - `name` (String, Required): Full capitalized country name
 - `code` (String, Required): Short unique code for country
 - `flag` (String, Required): URL to image of flag
-- `saved` (Boolean, Required): If country is on the saved list
+- `saved` (Boolean, Required): If country is on the saved list (not stored in database as a document's existence in the database indicates `saved = true`)
 
 # Credits
 The map icon used as the favicon and in the header is from [Icons8](https://icons8.com).
