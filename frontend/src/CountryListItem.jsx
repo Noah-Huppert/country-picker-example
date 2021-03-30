@@ -105,7 +105,7 @@ const CountryListItem = ({ item }) => {
     // Save item if not saved
     if (item.saved === false) {
       try {
-        await apiClient.saveCountry(item.code);
+        await apiClient.saveCountry(item);
       } catch (e) {
         console.error(`Failed to save country with code "${item.code}": ${e}`);
       }

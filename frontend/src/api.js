@@ -1,5 +1,12 @@
 const SUPPORTED_EVENTS = ["saveCountry", "removeSavedCountry"];
 
+class PrimaryAPIOfflineError extends Error {
+  constructor() {
+    super("Primary API offline");
+    this.name = "PrimaryAPIOfflineError";
+  }
+}
+
 class APIClient {
   constructor() {
     // API URLs
@@ -14,6 +21,9 @@ class APIClient {
     SUPPORTED_EVENTS.forEach((e) => {
       this.eventHandlers[e] = [];
     });
+
+    // Fallback list of saved countries
+    this.fallbackSavedCountries = [];
   }
 
   /**
@@ -23,6 +33,8 @@ class APIClient {
    * @param body {object} Body to be JSON encoded, optional.
    * @param primaryOnly {boolean} If true the request will only be attempted if the primary API is online.
    * @returns {Promise<FetchResponse>}
+   * @throws {PrimaryAPIOfflineError} If primaryOnly is true and the primary API is offline.
+   * @throws {string} If an unexpected error occurs.
    */
   async fetch(path, method, body, primaryOnly) {
     if (primaryOnly === undefined) {
@@ -53,7 +65,7 @@ class APIClient {
 
     if (this.primaryAPIOK === false) {
       if (primaryOnly === true) {
-        throw "This feature is offline";
+        throw new PrimaryAPIOfflineError();
       }
       
       activeAPIURL = this.backupAPIURL;
@@ -139,20 +151,45 @@ class APIClient {
         flag: r.flag,
         name: r.name,
         code: r.code || r.alpha2Code,
-        saved: r.saved || false,
+        saved: (r.saved !== undefined && r.saved) || false,
       };
     });
   }
 
   /**
    * Save a country to the saved list.
-   * @param code {string} Code of country to save.
+   * @param code {Country} Country to save.
    * @returns {Promise} When saved.
    */
-  async saveCountry(code) {
-    const resp = await this.fetch(`/saved/${code}`, "POST", undefined, true);
-    const body = await resp.json();
-    this.triggerEvent("saveCountry", body.country);
+  async saveCountry(country) {
+    try {
+      const resp = await this.fetch(`/saved/${country.code}`, "POST", undefined, true);
+      const body = await resp.json();
+      this.triggerEvent("saveCountry", body.country);
+    } catch (e) {
+      if (e instanceof PrimaryAPIOfflineError) {
+        // Use fallback list
+        // Check if already saved
+        const alreadySaved = this.fallbackSavedCountries.filter((c) => {
+          return c.code === country.code;
+        }).length > 0;
+        if (alreadySaved === true) {
+          return;
+        }
+
+        // Save
+        const toSave = {
+          ...country,
+          saved: true
+        };
+        
+        this.triggerEvent("saveCountry", toSave);
+        this.fallbackSavedCountries.push(toSave);
+      } else {
+        // Propagate error
+        throw e;
+      }
+    }
   }
 
   /**
@@ -161,8 +198,21 @@ class APIClient {
    * @returns {Promise} When removed.
    */
   async removeSavedCountry(code) {
-    await this.fetch(`/saved/${code}`, "DELETE", undefined, true);
-    this.triggerEvent("removeSavedCountry", code);
+    try {
+      await this.fetch(`/saved/${code}`, "DELETE", undefined, true);
+      this.triggerEvent("removeSavedCountry", code);
+    } catch (e) {
+      if (e instanceof PrimaryAPIOfflineError) {
+        // Use fallback list
+        this.fallbackSavedCountries = this.fallbackSavedCountries.filter((c) => {
+          return c.code !== code;
+        });
+        this.triggerEvent("removeSavedCountry", code);
+      } else {
+        // Propagate error
+        throw e;
+      }
+    }
   }
 
   /**
@@ -170,8 +220,18 @@ class APIClient {
    * @returns {Promise<Country[]>} Array of saved countries.
    */
   async getSavedCountries() {
-    const resp = await this.fetch("/saved", "GET", undefined, true);
-    return await resp.json();
+    try {
+      const resp = await this.fetch("/saved", "GET", undefined, true);
+      return await resp.json();
+    } catch (e) {
+      if (e instanceof PrimaryAPIOfflineError) {
+        // Use fallback list
+        return this.fallbackSavedCountries;
+      } else {
+        // Propagate error
+        throw e;
+      }
+    }
   }
 }
 
