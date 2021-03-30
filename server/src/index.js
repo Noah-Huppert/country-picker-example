@@ -7,7 +7,7 @@ const path = require("path");
 
 const CFG = {
   httpPort: process.env.PORT || 8000,
-  mongoURI: process.env.COUNTRY_PICKER_MONGO_URI || "mongodb://127.0.0.1:27017",
+  mongoURI: process.env.COUNTRY_PICKER_MONGO_URI || "mongodb://devuser:devpassword@127.0.0.1:27017",
   mongoDBName: process.env.COUNTRY_PICKER_MONGO_DB_NAME || "dev-country-picker-example",
 };
 

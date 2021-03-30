@@ -66,7 +66,7 @@ Endpoints:
 Configuration values are provided via environment variables. The default values should work with the development setup by default:
 
 - `PORT` (Integer, Default: `8000`): Port on which to listen for HTTP traffic
-- `COUNTRY_PICKER_MONGO_URI` (String, Default: `mongodb://127.0.0.1:27017`): MongoDB connection URI
+- `COUNTRY_PICKER_MONGO_URI` (String, Default: `mongodb://devuser:devpassword@127.0.0.1:27017`): MongoDB connection URI
 - `COUNTRY_PICKER_MONGO_DB_NAME` (String, Default: `dev-country-picker-example`): Name of the MongoDB database in which to store data
 
 To run the server:

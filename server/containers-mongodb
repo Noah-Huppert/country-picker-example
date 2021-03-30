@@ -21,7 +21,7 @@ case "$1" in
 	   case $($0 status) in
 		  running) die "already running" ;;
 		  stopped) $CONTAINER_CLI start "$container_name" ;;
-		  "not found") $CONTAINER_CLI run -d --net host --name "$container_name" "$container_tag" ;;
+		  "not found") $CONTAINER_CLI run -d --net host -e MONGO_INITDB_ROOT_USERNAME=devuser -e MONGO_INITDB_ROOT_PASSWORD=devpassword --name "$container_name" "$container_tag" ;;
 	   esac
 	   ;;
     status)

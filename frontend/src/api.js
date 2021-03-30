@@ -145,8 +145,8 @@ class APIClient {
     }
 
     const body = await res.json();
-    
-    return body.slice(0, 5).map((r) => {
+
+    let matches = body.slice(0, 5).map((r) => {
       return {
         flag: r.flag,
         name: r.name,
@@ -154,6 +154,22 @@ class APIClient {
         saved: (r.saved !== undefined && r.saved) || false,
       };
     });
+
+    // If using fallback API
+    if (this.fallbackSavedCountries.length > 0) {
+      const savedCodes = this.fallbackSavedCountries.map((c) => {
+        return c.code;
+      });
+      
+      matches = matches.map((m) => {
+        return {
+          ...m,
+          saved: savedCodes.indexOf(m.code) !== -1,
+        };
+      });
+    }
+    
+    return matches
   }
 
   /**
