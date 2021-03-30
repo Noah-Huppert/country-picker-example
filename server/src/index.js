@@ -111,16 +111,16 @@ app.get("/api/v0/name/:query", async (req, res) => {
     return c.name.toLowerCase().indexOf(query) !== -1;
   }).forEach((c) => {
     matches.push(c);
-    customMatchCodes.push(c.code);
+    customMatchCodes.push(c.code.toLowerCase());
   });
-  
+
   // Search external source for countries
   try {
     let externRes = await axios.get(`https://restcountries.eu/rest/v2/name/${query}?fields=flag;name;alpha2Code`);
 
     externRes.data.slice(0, 5).forEach((r) => {
       // Check a custom country hasn't overriden this result
-      if (customMatchCodes.indexOf(r.alpha2Code) !== -1) {
+      if (customMatchCodes.indexOf(r.alpha2Code.toLowerCase()) !== -1) {
         // Avoid overwriting custom entry
         return;
       }
