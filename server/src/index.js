@@ -16,27 +16,42 @@ const CUSTOM_COUNTRIES = [
   {
     name: "Antegria",
     code: "CUSTOM_AG",
-    flag: `/public/custom_ag.png`,
+    flag: "/public/custom_ag.png",
   },
   {
     name: "Arstotzka",
     code: "CUSTOM_AZ",
-    flag: `/public/custom_az.png`,
+    flag: "/public/custom_az.png",
   },
   {
     name: "Atlantis",
     code: "CUSTOM_AT",
-    flag: `/public/custom_at.png`,
+    flag: "/public/custom_at.png",
   },
   {
     name: "Canada",
-    code: "CUSTOM_CA",
-    flag: `/public/custom_ca.png`,
+    code: "CA",
+    flag: "/public/custom_ca.png",
   },
   {
     name: "Grenyarnia",
     code: "CUSTOM_GN",
-    flag: `/public/custom_gn.png`,
+    flag: "/public/custom_gn.png",
+  },
+  {
+    name: "Narnia",
+    code: "CUSTOM_NR",
+    flag: "/public/custom_nr.svg",
+  },
+  {
+    name: "Qumar",
+    code: "CUSTOM_QR",
+    flag: "/public/custom_qr.png",
+  },
+  {
+    name: "Yoshi's Island",
+    code: "CUSTOM_YI",
+    flag: "/public/custom_yi.png",
   },
 ];
 
@@ -89,12 +104,27 @@ app.get("/api/v0/health", (req, res) => {
 app.get("/api/v0/name/:query", async (req, res) => {
   let query = req.params.query.toLowerCase();
   let matches = [];
+  let customMatchCodes = [];
+
+    // Check custom countries
+  CUSTOM_COUNTRIES.filter((c) => {
+    return c.name.toLowerCase().indexOf(query) !== -1;
+  }).forEach((c) => {
+    matches.push(c);
+    customMatchCodes.push(c.code);
+  });
   
   // Search external source for countries
   try {
     let externRes = await axios.get(`https://restcountries.eu/rest/v2/name/${query}?fields=flag;name;alpha2Code`);
 
     externRes.data.slice(0, 5).forEach((r) => {
+      // Check a custom country hasn't overriden this result
+      if (customMatchCodes.indexOf(r.alpha2Code) !== -1) {
+        // Avoid overwriting custom entry
+        return;
+      }
+      
       matches.push({
         name: r.name,
         code: r.alpha2Code,
@@ -108,13 +138,6 @@ app.get("/api/v0/name/:query", async (req, res) => {
       console.error(`Failed to search external countries service: ${e}`);
     }
   }
-
-  // Check custom countries
-  CUSTOM_COUNTRIES.filter((c) => {
-    return c.name.toLowerCase().indexOf(query) !== -1;
-  }).forEach((c) => {
-    matches.push(c);
-  });
 
   // Ensure returning no more than 5
   matches = matches.slice(0, 5);
