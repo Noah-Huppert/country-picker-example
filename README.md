@@ -14,6 +14,8 @@ Simple country picker frontend and backend.
 # Overview
 Example of a full stack application which allows the user to search for countries and save them to a list.
 
+![Screenshot of the web frontend](./screenshot.png)
+
 # Run
 To run the application NodeJS and Yarn must be installed.
 
