@@ -21,6 +21,15 @@ font-weight: bold;
 margin-left: 1rem;
 `;
 
+const NoSavedCountries = styled.div`
+width: 100%;
+display: flex;
+align-items: center;
+margin-left: 1rem;
+font-weight: bold;
+font-size: 1.3rem;
+`;
+
 const SavedCountriesList = () => {
   const apiClient = useContext(APICtx);
   
@@ -62,6 +71,10 @@ const SavedCountriesList = () => {
             Loading...
           </LoadingText>
         </Loading>
+      ) || saved.length === 0 && (
+        <NoSavedCountries className="text-light">
+          No saved countries.
+        </NoSavedCountries>
       ) || saved.map((c) => {
         return (
           <CountryListItem key={c.code} item={c} />

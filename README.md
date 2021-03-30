@@ -42,17 +42,6 @@ yarn start
 ```
 
 # Development
-## Frontend
-The frontend is a ReactJS app built with Parcel.
-
-Run a development server which builds and serves content:
-
-```
-yarn frontend-dev
-```
-
-Then navigate to [127.0.0.1:1234](http://127.0.0.1:1234).
-
 ## Server
 The server is an ExpressJS REST API server.
 
@@ -85,6 +74,19 @@ To run the server:
 ```
 yarn start
 ```
+
+By default the server will be accessible at [127.0.0.1:8000](http://127.0.0.1:8000). If you configured a different port, use that instead of `8000`.
+
+## Frontend
+The frontend is a ReactJS app built with Parcel.
+
+Run a development server which builds and serves content:
+
+```
+yarn frontend-dev
+```
+
+Ignore the terminal output which says to view the build result at `127.0.0.1:1234` and view the result at whatever URL the server is running on. The frontend will only work if it served by the backend server.
 
 # Design
 ## Data Model

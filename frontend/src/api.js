@@ -25,6 +25,10 @@ class APIClient {
    * @returns {Promise<FetchResponse>}
    */
   async fetch(path, method, body, primaryOnly) {
+    if (primaryOnly === undefined) {
+      primaryOnly = false;
+    }
+    
     // Check if primary API is okay
     let activeAPIURL = this.primaryAPIURL;
     
@@ -45,7 +49,9 @@ class APIClient {
         this.primaryAPIOK = false;
         activeAPIURL = this.backupAPIURL;
       }
-    } else if (this.primaryAPIOK === false) {
+    }
+
+    if (this.primaryAPIOK === false) {
       if (primaryOnly === true) {
         throw "This feature is offline";
       }
