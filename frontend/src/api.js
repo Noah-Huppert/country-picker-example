@@ -3,7 +3,7 @@ const SUPPORTED_EVENTS = ["saveCountry", "removeSavedCountry"];
 class APIClient {
   constructor() {
     // API URLs
-    this.primaryAPIURL = "http://127.0.0.1:8000/api/v0";
+    this.primaryAPIURL = `${window.location.protocol}//${window.location.host}/api/v0`;
     this.backupAPIURL = "https://restcountries.eu/rest/v2";
 
     // null = not checked, true = ok, false = failure

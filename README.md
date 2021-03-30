@@ -12,7 +12,7 @@ Simple country picker frontend and backend.
 - [Credits](#credits)
 
 # Overview
-Example of a full stack application which allows the user to search for a countries and save them to a list.
+Example of a full stack application which allows the user to search for countries and save them to a list.
 
 # Run
 To run the application NodeJS and Yarn must be installed.
@@ -76,7 +76,6 @@ Endpoints:
 
 Configuration values are provided via environment variables. The default values should work with the development setup by default:
 
-- `COUNTRY_PICKER_EXTERNAL_URL` (String, Default: `http://127.0.0.1:8000`): The URL from which web browsers should be able to access the server. Must not end in a slash.
 - `PORT` (Integer, Default: `8000`): Port on which to listen for HTTP traffic
 - `COUNTRY_PICKER_MONGO_URI` (String, Default: `mongodb://127.0.0.1:27017`): MongoDB connection URI
 - `COUNTRY_PICKER_MONGO_DB_NAME` (String, Default: `dev-country-picker-example`): Name of the MongoDB database in which to store data

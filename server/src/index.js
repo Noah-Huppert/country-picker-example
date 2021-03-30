@@ -6,7 +6,6 @@ const mongodb = require("mongodb");
 const path = require("path");
 
 const CFG = {
-  externalURL: process.env.COUNTRY_PICKER_EXTERNAL_URL || "http://127.0.0.1:8000",
   httpPort: process.env.PORT || 8000,
   mongoURI: process.env.COUNTRY_PICKER_MONGO_URI || "mongodb://127.0.0.1:27017",
   mongoDBName: process.env.COUNTRY_PICKER_MONGO_DB_NAME || "dev-country-picker-example",
@@ -17,27 +16,27 @@ const CUSTOM_COUNTRIES = [
   {
     name: "Antegria",
     code: "CUSTOM_AG",
-    flag: `${CFG.externalURL}/public/custom_ag.png`,
+    flag: `/public/custom_ag.png`,
   },
   {
     name: "Arstotzka",
     code: "CUSTOM_AZ",
-    flag: `${CFG.externalURL}/public/custom_az.png`,
+    flag: `/public/custom_az.png`,
   },
   {
     name: "Atlantis",
     code: "CUSTOM_AT",
-    flag: `${CFG.externalURL}/public/custom_at.png`,
+    flag: `/public/custom_at.png`,
   },
   {
     name: "Canada",
     code: "CUSTOM_CA",
-    flag: `${CFG.externalURL}/public/custom_ca.png`,
+    flag: `/public/custom_ca.png`,
   },
   {
     name: "Grenyarnia",
     code: "CUSTOM_GN",
-    flag: `${CFG.externalURL}/public/custom_gn.png`,
+    flag: `/public/custom_gn.png`,
   },
 ];
 
@@ -278,7 +277,7 @@ async function httpListen() {
       if (err !== undefined) {
         reject(err);
       }
-      console.log(`HTTP server listening on :${CFG.httpPort}, it should be accessible from ${CFG.externalURL}`);
+      console.log(`HTTP server listening on :${CFG.httpPort}`);
     });
   });
 }
