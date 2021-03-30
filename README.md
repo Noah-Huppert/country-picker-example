@@ -71,10 +71,10 @@ Endpoints:
 - `GET /api/v0/saved`: Retrieves a list of all saved countries
   - Request: N/A
   - Response: All saved countries - `Country[]`
-- `POST /api/v0/saved/{code}`
+- `POST /api/v0/saved/{code}`: Saves a country
   - Request: URL parameter `{code}` must be the code of the country one wishes to save
   - Response: The country which was saved - `{ country: Country }`
-- `DELETE /api/v0/saved/{code}`
+- `DELETE /api/v0/saved/{code}`: Removes a saved country
   - Request: URL parameter `{code}` must be the code of the country one wishes to remove from the saved list
   - Response: The code of the country which was successfully deleted - `{ deleted_country_code: string }`
 
